@@ -3,4 +3,4 @@ bomberman
 
 java project
 
-Ameen's a noob
+Sam's a noob
