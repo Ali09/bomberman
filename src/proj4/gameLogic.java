@@ -127,6 +127,8 @@ public class gameLogic
       movedPlayer.loc = newLoc;
       movedPlayer.alive = false;
       gameGrid[newLoc.y][newLoc.x] = cellType.PLAYER_DEAD;
+
+      clearDeadTimer(this, loc, 1 second);      
       
       redrawGrid();
       
