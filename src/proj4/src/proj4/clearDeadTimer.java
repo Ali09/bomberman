@@ -8,6 +8,7 @@ public class clearDeadTimer extends TimerTask {
 
   public clearDeadTimer(gameLogic gameLogic, Location loc) 
   {
+    //the space becomes grass instead of a dead body
     proj4.gameLogic.gameGrid[loc.y][loc.x] = cellType.GRASS;
   }
 
