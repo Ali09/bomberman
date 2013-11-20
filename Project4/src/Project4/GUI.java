@@ -120,35 +120,6 @@ public class GUI extends JFrame{
       e.printStackTrace();
     }
     
-    Random rand = new Random();
-    int rockNum = rand.nextInt(15)+55;
-    int rockx = rand.nextInt(11);
-    int rocky = rand.nextInt(13);   
-    for (int i = 0; i < rockNum; i++){
-      while ((((rockx+1)%2 == 0) && ((rocky+1)%2 ==0)) ||
-          (rockx == 0 && rocky == 0) ||
-          (rockx == 0 && rocky == 1) ||
-          (rockx == 1 && rocky == 0) ||
-          (rockx == 0 && rocky == 12) ||
-          (rockx == 0 && rocky == 11) ||
-          (rockx == 1 && rocky == 12) ||
-          (rockx == 10 && rocky == 0) ||
-          (rockx == 9 && rocky == 0) ||
-          (rockx == 10 && rocky == 1) ||
-          (rockx == 10 && rocky == 12) ||
-          (rockx == 9 && rocky == 12) ||
-          (rockx == 10 && rocky == 11) ||
-          (grid[rockx+1][rocky+1].getIcon() == rocks)){
-        rockx = rand.nextInt(11);
-        rocky = rand.nextInt(13);
-      }
-      grid[rockx+1][rocky+1].setIcon(rocks);
-    
-      rockx = rand.nextInt(11);
-      rocky = rand.nextInt(13);
-    }
-
-    
     pack();
     setLocationRelativeTo(null);
     setVisible(true);    

@@ -2,7 +2,9 @@ package Project4;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -28,6 +30,9 @@ public class player extends Entity
   public int score;
 
   int velX = 0, velY = 0;
+  int speed = 2;
+  
+  int oldx, oldy;
   
   public player(int x, int y) {
     super(x, y);
@@ -37,6 +42,13 @@ public class player extends Entity
   public void update(){
     boolean flagx = true;
     boolean flagy = true;
+    
+    if (collides()){
+      x = oldx;
+      y = oldy;
+      flagx = false;
+      flagy = false;
+    }
     if ((y + velY < 50) || (y + velY > 550)){
       flagy = false;
     }
@@ -44,9 +56,11 @@ public class player extends Entity
       flagx = false;
     }
     if (flagy){
+      oldy = y;
       y += velY;
     }
     if (flagx){
+      oldx = x;
       x += velX;
     }
   }
@@ -56,19 +70,19 @@ public class player extends Entity
   }
   
   public Image getPlayerImg(){
-    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/sprite.gif");
+    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/sprite2.gif");
     return ic.getImage();
   }
   public void keyPressed(KeyEvent e){
     int key = e.getKeyCode();
     if (key == KeyEvent.VK_UP){
-      velY = -2;
+      velY = -speed;
     } else if (key == KeyEvent.VK_DOWN){
-      velY = 2;
+      velY = speed;
     } else if (key == KeyEvent.VK_LEFT){
-      velX = -2;
+      velX = -speed;
     } else if (key == KeyEvent.VK_RIGHT){
-      velX = 2;
+      velX = speed;
     } 
   }
   
@@ -84,4 +98,32 @@ public class player extends Entity
       velX = 0;
     } 
   }
+  
+  public boolean collides(){
+    ArrayList<Rock> rocks = PaintPane.getRockList();
+    
+    for (int i = 0; i < rocks.size(); i++){
+      Rock temp = rocks.get(i);
+      
+      if (getBounds().intersects(temp.getBounds())){
+        return true;
+      }
+    }
+    ArrayList<Obstruction> obstacles = PaintPane.getObstacleList();
+    
+    for (int i = 0; i < obstacles.size(); i++){
+      Obstruction temp = obstacles.get(i);
+      
+      if (getBounds().intersects(temp.getBounds())){
+        return true;
+      }
+    }   
+    
+    return false;
+  }
+  
+  public Rectangle getBounds(){
+    return new Rectangle(x, y, getPlayerImg().getWidth(null), getPlayerImg().getHeight(null)-5);
+  }
+  
 }
