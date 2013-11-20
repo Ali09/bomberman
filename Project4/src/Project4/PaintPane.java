@@ -19,6 +19,7 @@ public class PaintPane extends JPanel implements ActionListener {
     private Image background;
     Timer mainTimer;
     player p;
+    static ArrayList<Bomb> bombs = new ArrayList<Bomb>();
     static ArrayList<Obstruction> obstacles = new ArrayList<Obstruction>();
     static ArrayList<Rock> rocks = new ArrayList<Rock>();
     static Rock grid[][] = new Rock[11][13];
@@ -131,4 +132,15 @@ public class PaintPane extends JPanel implements ActionListener {
       return obstacles;
     }
     
+    public static void addBomb(Bomb b){
+      bombs.add(b);
+    }
+    
+    public static void removeBomb(Bomb b){
+      bombs.remove(b);
+    }
+    
+    public static ArrayList<Bomb> getBombList(){
+      return bombs;
+    }    
 }
