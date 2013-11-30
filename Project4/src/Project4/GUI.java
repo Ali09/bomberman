@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 public class GUI extends JFrame{
   
   static JLabel grid[][];
-  public static int numPlayers = 1;
+  public static int numPlayers = 2;
   //Number of players alive
   public static int numPlayersAlive;
   private static int scores[];

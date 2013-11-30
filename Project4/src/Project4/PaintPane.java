@@ -16,7 +16,7 @@ import Project4.gameLogic.cellType;
 
 public class PaintPane extends JPanel implements ActionListener {
   
-    Random rand = new Random();
+    static Random rand = new Random();
   
     private Image background;
     Timer mainTimer;
@@ -190,8 +190,10 @@ public class PaintPane extends JPanel implements ActionListener {
         
         if ((temp.x == x*60) && (temp.y == y*50)){
           rocks.remove(temp);
-          Upgrade replace = new Upgrade(x*60, y*50);
-          addUpgrade(replace);
+          if (rand.nextInt(2) == 0){
+            Upgrade replace = new Upgrade(x*60, y*50);
+            addUpgrade(replace);
+          }
           break;
         }
       }

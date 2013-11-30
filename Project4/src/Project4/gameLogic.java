@@ -357,29 +357,27 @@ public class gameLogic
       if (locType == cellType.PLAYER ||
           locType == cellType.PLAYER_AND_BOMB)
       {
-        System.out.println("BOOM");
+        //System.out.println("BOOM");
         gameGrid[loc.y][loc.x] = cellType.PLAYER_DEAD;
         // player in given location
         // check all current alive players for their location
-        player deadPlayer = null;
+        
         for (player alivePlayer : players)
         {
-          System.out.println(alivePlayer.alive);
+          //System.out.println(alivePlayer.alive);
           if (alivePlayer == null){
         	  break;
           }
-          if (alivePlayer.alive == true){
-                                                  //&&
-                                                //    alivePlayer.loc.x == loc.x &&
-                                                //    alivePlayer.loc.y == loc.y)
-            System.out.println("here");
-            deadPlayer = alivePlayer;
+          //System.out.println(loc.x + "," + loc.y + " " + alivePlayer.x/60 + "," + alivePlayer.y/50);
+          if (alivePlayer.alive == true &&
+              alivePlayer.x/60 == loc.x &&
+              alivePlayer.y/50 == loc.y){
+            player deadPlayer = alivePlayer;
+            deadPlayer.alive = false;
+            PaintPane.removePlayer(deadPlayer);
           }
         }
-        if (deadPlayer != null){
-        	deadPlayer.alive = false;
-        	PaintPane.removePlayer(deadPlayer);
-        }
+
         
         GUI.numPlayersAlive--;
         if (GUI.numPlayersAlive < 2)
