@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 public class GUI extends JFrame{
   
   static JLabel grid[][];
-  private static int numPlayers = 1;
+  public static int numPlayers = 1;
   //Number of players alive
   public static int numPlayersAlive;
   private static int scores[];
@@ -87,7 +87,7 @@ public class GUI extends JFrame{
     
     PaintPane pane = null;
     try {
-      pane = new PaintPane(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/map.gif")));
+      pane = new PaintPane(ImageIO.read(new File("src/Project4/images/map.gif")));
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -106,7 +106,7 @@ public class GUI extends JFrame{
             //grid[i][j] = new JLabel(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/sprite.gif"))));
           //}
           //else{
-            grid[i][j] = new JLabel(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/empty.gif"))));
+            grid[i][j] = new JLabel(new ImageIcon(ImageIO.read(new File("src/Project4/images/empty.gif"))));
           //}
         } catch (IOException e) {
           System.out.println("Image not found");
@@ -116,14 +116,7 @@ public class GUI extends JFrame{
 
       }
     }
-    ImageIcon rocks = null;
-    try {
-      rocks = new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/rocks.gif")));
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    
+
     pack();
     setLocationRelativeTo(null);
     setVisible(true);    

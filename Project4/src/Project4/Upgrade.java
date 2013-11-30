@@ -16,13 +16,11 @@ public class Upgrade extends Entity {
             Random rand = new Random();
 	    int temp = rand.nextInt(3);
             switch(temp){
-            case 1: type = "RADIUS";
+            case 0: type = "RADIUS";
             break;
-            case 2: type = "SPEED";
+            case 1: type = "SPEED";
             break;
-            case 3: type = "AMOUNT";
-            break;
-            case 4: type = "?";
+            case 2: type = "AMOUNT";
             break;
             default:
             break;
@@ -37,7 +35,17 @@ public class Upgrade extends Entity {
 	  }
 	  
 	  public Image getUpgradeImg(){
-	    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/bomb2.gif");
+	    ImageIcon ic = null;
+	    switch(type){
+	    case "RADIUS": ic = new ImageIcon("src/Project4/images/powerup_radius.gif");
+	      break;
+	    case "SPEED": ic = new ImageIcon("src/Project4/images/powerup_speed.gif");
+	      break;
+	    case "AMOUNT": ic = new ImageIcon("src/Project4/images/powerup_bomb.gif");
+	      break;
+	    default:
+	      break;
+	    }
 	    return ic.getImage();
 	  }
 	  

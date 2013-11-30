@@ -26,7 +26,7 @@ public class player extends Entity
   public int playerNum;
   public Location loc;
   public gameLogic.direction playerDirection;
-  public boolean alive;
+  public boolean alive = true;
   
   // number of bombs player is able
   // to drop at a given instant, initially 1
@@ -51,13 +51,28 @@ public class player extends Entity
   public void update(){
     boolean flagx = true;
     boolean flagy = true;
-    getUpgrade();
-    if (collides()){
+    int newx = x+velX;
+    int newy = y+velY;
+/*
+    if (collides(newx, newy)){
+      for (int i = velX, j = velY; i != 0 && j != 0; i--, j--){
+          newx = x+i;
+          newy = y+j;
+          if (!collides(newx, newy)){
+            break;
+          }      
+      }
+    }
+*/    getUpgrade(newx, newy);
+    
+       
+    if (collides(x+velX, y+velY)){
       x = oldx;
       y = oldy;
       flagx = false;
       flagy = false;
     }
+    
     if ((y + velY < 50) || (y + velY > 560)){
       flagy = false;
     }
@@ -79,7 +94,7 @@ public class player extends Entity
   }
   
   public Image getPlayerImg(){
-    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/sprite2.gif");
+    ImageIcon ic = new ImageIcon("src/Project4/images/sprite2.gif");
     return ic.getImage();
   }
   public void keyPressed(KeyEvent e){
@@ -93,7 +108,7 @@ public class player extends Entity
     } else if (key == KeyEvent.VK_RIGHT){
       velX = speed;
     } 
-    if ((key == KeyEvent.VK_SPACE) && numBombs != 0){
+    if ((key == KeyEvent.VK_SPACE) && numBombs > 0){
     	//If bomb in place dont add another
       //gameLogic.placeBomb(playerNum);
       numBombs--;
@@ -103,13 +118,13 @@ public class player extends Entity
       final Bomb temp = new Bomb((60+((thex-1)*60)), (50+((they-1)*50)));
       gameLogic.gameGrid[they][thex] = cellType.PLAYER_AND_BOMB;
       try {
-        GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/bomb.gif"))));
+        GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_1.gif"))));
         Timer timer1 = new Timer();
         timer1.schedule(new TimerTask(){
           public void run(){
             PaintPane.addBomb(temp);
             try {
-              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/bomb2.gif"))));
+              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_2.gif"))));
             } catch (IOException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -121,7 +136,7 @@ public class player extends Entity
         timer2.schedule(new TimerTask(){
           public void run(){
             try {
-              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/bomb3.gif"))));
+              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_3.gif"))));
             } catch (IOException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -133,7 +148,7 @@ public class player extends Entity
         timer3.schedule(new TimerTask(){
           public void run(){
             try {
-              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/empty.gif"))));
+              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/empty.gif"))));
             } catch (IOException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -165,13 +180,13 @@ public class player extends Entity
     } 
   }
   
-  public boolean collides(){
+  public boolean collides(int newx, int newy){
     ArrayList<Rock> rocks = PaintPane.getRockList();
     
     for (int i = 0; i < rocks.size(); i++){
       Rock temp = rocks.get(i);
       
-      if (getBounds().intersects(temp.getBounds())){
+      if (getBounds(newx, newy).intersects(temp.getBounds())){
         return true;
       }
     }
@@ -181,7 +196,7 @@ public class player extends Entity
       Obstruction temp = obstacles.get(i);
       
       
-      if (getBounds().intersects(temp.getBounds())){
+      if (getBounds(newx, newy).intersects(temp.getBounds())){
         return true;
       }
     }   
@@ -190,19 +205,19 @@ public class player extends Entity
     for (int i = 0; i < bombs.size(); i++){
       Bomb temp = bombs.get(i);
       
-      if (getBounds().intersects(temp.getBounds())){
+      if (getBounds(newx, newy).intersects(temp.getBounds())){
         return true;
       }
     }   
     return false;
   }
   
-  public void getUpgrade(){
+  public void getUpgrade(int newx, int newy){
     ArrayList<Upgrade> upgrades = PaintPane.getUpgradeList();
     
     for (int i = 0; i < upgrades.size(); i++){
       Upgrade temp = upgrades.get(i);
-      if (getBounds().intersects(temp.getBounds())){
+      if (getBounds(newx, newy).intersects(temp.getBounds())){
         System.out.println("No");
         switch(temp.type){
     		case "RADIUS": bombRadius++;
@@ -214,14 +229,15 @@ public class player extends Entity
     		default:
     		break;
         }
+        System.out.println("Yes");
         PaintPane.removeUpgrade(temp);
         System.out.println("Upgrade removed");
       }
     }
   }
   
-  public Rectangle getBounds(){
-    return new Rectangle(x, y, getPlayerImg().getWidth(null), getPlayerImg().getHeight(null)-5);
+  public Rectangle getBounds(int newx, int newy){
+    return new Rectangle(newx, newy, getPlayerImg().getWidth(null), getPlayerImg().getHeight(null)-5);
   }
    
 }

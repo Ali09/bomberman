@@ -23,7 +23,7 @@ public class Rock extends Entity {
   }
   
   public Image getRockImg(){
-    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/rocks.gif");
+    ImageIcon ic = new ImageIcon("src/Project4/images/rocks.gif");
     return ic.getImage();
   }
   

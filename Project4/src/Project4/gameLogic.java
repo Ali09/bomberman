@@ -237,7 +237,6 @@ public class gameLogic
   // or a destructable tile / powerup (in which case it destroys object)
   public static void explodeBomb(Location bombLoc, int bombRadius, int playerNum)
   {
-	System.out.println("Bomb: " + bombLoc.y + " " + bombLoc.x);
     // invalid location, do nada
     if (validLocation(bombLoc) == false)
       return;
@@ -343,7 +342,7 @@ public class gameLogic
     }
     
     for (Location loc : locStack){
-    	System.out.println("Check: " + loc.y + " " + loc.x);
+    	System.out.println("Check: " + loc.y + " " + loc.x + " = " + gameGrid[loc.y][loc.x]);
     }
     // check each location on stack
     // and destroy
@@ -358,23 +357,28 @@ public class gameLogic
       if (locType == cellType.PLAYER ||
           locType == cellType.PLAYER_AND_BOMB)
       {
+        System.out.println("BOOM");
         gameGrid[loc.y][loc.x] = cellType.PLAYER_DEAD;
-        
         // player in given location
         // check all current alive players for their location
         player deadPlayer = null;
         for (player alivePlayer : players)
         {
+          System.out.println(alivePlayer.alive);
           if (alivePlayer == null){
         	  break;
           }
-          if (alivePlayer.alive == true &&
-              alivePlayer.loc.x == loc.x &&
-              alivePlayer.loc.y == loc.y)
+          if (alivePlayer.alive == true){
+                                                  //&&
+                                                //    alivePlayer.loc.x == loc.x &&
+                                                //    alivePlayer.loc.y == loc.y)
+            System.out.println("here");
             deadPlayer = alivePlayer;
+          }
         }
         if (deadPlayer != null){
         	deadPlayer.alive = false;
+        	PaintPane.removePlayer(deadPlayer);
         }
         
         GUI.numPlayersAlive--;
@@ -395,7 +399,6 @@ public class gameLogic
       // and create fire timer to clear it
       else
       {
-    	System.out.println(loc.y + " " + loc.x);
     	PaintPane.removeRock(loc.y, loc.x);
         gameGrid[loc.y][loc.x] = cellType.FIRE;
         Timer timer;

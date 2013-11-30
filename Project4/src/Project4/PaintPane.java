@@ -20,23 +20,38 @@ public class PaintPane extends JPanel implements ActionListener {
   
     private Image background;
     Timer mainTimer;
-    player p;
+    static ArrayList<player> players = new ArrayList<player>();
     static ArrayList<Bomb> bombs = new ArrayList<Bomb>();
     static ArrayList<Obstruction> obstacles = new ArrayList<Obstruction>();
-	static ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
+  	static ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
     static ArrayList<Rock> rocks = new ArrayList<Rock>();
     static Rock grid[][] = new Rock[11][13];
+    static gameLogic gameLogic;
     
     int rockNum;
 
     public PaintPane(Image image) {     
         setFocusable(true);
-        background = image;   
-        p = new player(60, 50, 0); 
-        gameLogic gameLogic = new gameLogic();
-        gameLogic.players = new player[4];
-        gameLogic.players[0] = p; //FIX
-        addKeyListener(new KeyAdapt(p));
+        background = image;  
+        
+        gameLogic = new gameLogic();
+        gameLogic.players = new player[GUI.numPlayers];
+        
+        for (int i = 0; i < GUI.numPlayers; i++){
+          if (i == 0){
+            player temp = new player(60, 50, i);
+            addKeyListener(new KeyAdapt(temp));
+            gameLogic.players[i] = temp;
+            players.add(temp);
+          }
+          else if (i == 1){
+            player temp = new player(60, 100, i);
+            addKeyListener(new KeyAdapt(temp));
+            players.add(temp);
+            gameLogic.players[i] = temp;
+          }
+        }
+
         
         mainTimer = new Timer(10, this);
         mainTimer.start();
@@ -121,7 +136,11 @@ public class PaintPane extends JPanel implements ActionListener {
       super.paint(g);
       Graphics2D g2d = (Graphics2D) g;
       
-      p.draw(g2d);
+      for (int i = 0; i < players.size(); i++){
+        player temp = players.get(i);
+        gameLogic.updateLocation(temp.playerNum);
+        temp.draw(g2d);
+      }
       
       for (int i = 0; i < rocks.size(); i++){
         Rock temp = rocks.get(i);
@@ -141,9 +160,24 @@ public class PaintPane extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
-      p.update();
+      for (int i = 0; i < players.size(); i++){
+        player temp = players.get(i);
+        temp.update();
+      }
       repaint();
     }
+    
+    public void addPlayer(player p){
+      players.add(p);
+    }
+    
+    public static void removePlayer(player p){
+      players.remove(p);
+    }
+    
+    public static ArrayList<player> getPlayerList(){
+      return players;
+    }   
 
     public void addRock(Rock r){
       rocks.add(r);

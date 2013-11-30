@@ -21,7 +21,7 @@ public class Obstruction extends Entity {
   }
   
   public Image getObstacleImg(){
-    ImageIcon ic = new ImageIcon("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/empty.gif");
+    ImageIcon ic = new ImageIcon("src/Project4/images/empty.gif");
     return ic.getImage();
   }
   
