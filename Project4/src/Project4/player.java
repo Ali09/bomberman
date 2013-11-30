@@ -9,14 +9,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import Project4.gameLogic.cellType;
+import Project4.gameLogic.explodeType;
 
 // player class describing
 // bomberman charecter
 public class player extends Entity
 { 
+  private static final int NUM_COLS = 0;
+  private static final int NUM_ROWS = 0;
   public int playerNum;
   public Location loc;
   public gameLogic.direction playerDirection;
@@ -24,13 +30,10 @@ public class player extends Entity
   
   // number of bombs player is able
   // to drop at a given instant, initially 1
-  public int numBombs;
+  public int numBombs = 1;
   
   // radius of bomb explosion for player, initially 1
-  public int bombRadius;
-  
-  //checks for movement spam
-  public long spam = System.currentTimeMillis();
+  public int bombRadius = 1;
   
   public int score;
 
@@ -39,15 +42,16 @@ public class player extends Entity
   
   int oldx, oldy;
   
-  public player(int x, int y) {
+  public player(int x, int y, int playerNum) {
     super(x, y);
+    this.playerNum = playerNum;
     update();
   }
 
   public void update(){
     boolean flagx = true;
     boolean flagy = true;
-    
+    getUpgrade();
     if (collides()){
       x = oldx;
       y = oldy;
@@ -89,10 +93,15 @@ public class player extends Entity
     } else if (key == KeyEvent.VK_RIGHT){
       velX = speed;
     } 
-    if (key == KeyEvent.VK_SPACE){
+    if ((key == KeyEvent.VK_SPACE) && numBombs != 0){
+    	//If bomb in place dont add another
+      //gameLogic.placeBomb(playerNum);
+      numBombs--;
+      System.out.println("a lot");
       final int they = y/50;
       final int thex = x/60;
       final Bomb temp = new Bomb((60+((thex-1)*60)), (50+((they-1)*50)));
+      gameLogic.gameGrid[they][thex] = cellType.PLAYER_AND_BOMB;
       try {
         GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("C:/Users/Samuel/Desktop/adt-bundle-windows-x86_64-20130219/eecs285/Project4/bomb.gif"))));
         Timer timer1 = new Timer();
@@ -130,6 +139,8 @@ public class player extends Entity
               e.printStackTrace();
             }
             PaintPane.removeBomb(temp);
+            numBombs++;
+            gameLogic.explodeBomb(new Location(thex, they), bombRadius, playerNum);
           }
         }, 3000);  
         
@@ -178,18 +189,39 @@ public class player extends Entity
 
     for (int i = 0; i < bombs.size(); i++){
       Bomb temp = bombs.get(i);
-      System.out.println(temp.x + " " + temp.y);
       
       if (getBounds().intersects(temp.getBounds())){
         return true;
       }
     }   
-    
     return false;
+  }
+  
+  public void getUpgrade(){
+    ArrayList<Upgrade> upgrades = PaintPane.getUpgradeList();
+    
+    for (int i = 0; i < upgrades.size(); i++){
+      Upgrade temp = upgrades.get(i);
+      if (getBounds().intersects(temp.getBounds())){
+        System.out.println("No");
+        switch(temp.type){
+    		case "RADIUS": bombRadius++;
+    		break;
+    		case "SPEED": speed++;
+    		break;
+    		case "AMOUNT": numBombs++;
+    		break;
+    		default:
+    		break;
+        }
+        PaintPane.removeUpgrade(temp);
+        System.out.println("Upgrade removed");
+      }
+    }
   }
   
   public Rectangle getBounds(){
     return new Rectangle(x, y, getPlayerImg().getWidth(null), getPlayerImg().getHeight(null)-5);
   }
-  
+   
 }

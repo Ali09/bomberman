@@ -26,6 +26,8 @@ public class GUI extends JFrame{
   
   static JLabel grid[][];
   private static int numPlayers = 1;
+  //Number of players alive
+  public static int numPlayersAlive;
   private static int scores[];
   
   
@@ -60,7 +62,7 @@ public class GUI extends JFrame{
     
     
     
-    
+    /* FIX
     
     player[] people = new player[numPlayers];
     for (int i = 0; i < numPlayers; i++){
@@ -79,6 +81,8 @@ public class GUI extends JFrame{
         break;
       }
     }
+    */
+    numPlayersAlive = numPlayers;
     
     
     PaintPane pane = null;

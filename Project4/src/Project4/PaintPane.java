@@ -12,6 +12,8 @@ import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import Project4.gameLogic.cellType;
+
 public class PaintPane extends JPanel implements ActionListener {
   
     Random rand = new Random();
@@ -21,6 +23,7 @@ public class PaintPane extends JPanel implements ActionListener {
     player p;
     static ArrayList<Bomb> bombs = new ArrayList<Bomb>();
     static ArrayList<Obstruction> obstacles = new ArrayList<Obstruction>();
+	static ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
     static ArrayList<Rock> rocks = new ArrayList<Rock>();
     static Rock grid[][] = new Rock[11][13];
     
@@ -29,15 +32,34 @@ public class PaintPane extends JPanel implements ActionListener {
     public PaintPane(Image image) {     
         setFocusable(true);
         background = image;   
-        p = new player(60, 50);
+        p = new player(60, 50, 0); 
+        gameLogic gameLogic = new gameLogic();
+        gameLogic.players = new player[4];
+        gameLogic.players[0] = p; //FIX
         addKeyListener(new KeyAdapt(p));
         
         mainTimer = new Timer(10, this);
         mainTimer.start();
+        
+        gameLogic.gameGrid = new cellType[gameLogic.NUM_ROWS][gameLogic.NUM_COLS];        
+        for (int i = 0; i < 13; i++){
+        	for (int j = 0; j < 15; j++){
+        		gameLogic.gameGrid[i][j] = cellType.GRASS;
+        	}
+        }
+        for (int i = 0; i < 13; i++){
+        	for (int j = 0; j < 15; j++){
+        		if ((i == 0) || (i == 12) || (j == 0) || (j == 14)){
+        			gameLogic.gameGrid[i][j] = cellType.STONE;
+        		}
+        	}
+        }
+        
+        
         rockNum = rand.nextInt(15)+55;
         int rockx = rand.nextInt(11);
         int rocky = rand.nextInt(13); 
-        
+        //ROCKX IS ROCKY
         for (int i = 0; i < rockNum; i++){
             while ((((rockx+1)%2 == 0) && ((rocky+1)%2 ==0)) ||
                 (rockx == 0 && rocky == 0) ||
@@ -60,11 +82,13 @@ public class PaintPane extends JPanel implements ActionListener {
             addRock(new Rock(60+(rocky*60), 50+(rockx*50)));
             rockx = rand.nextInt(11);
             rocky = rand.nextInt(13);
+            gameLogic.gameGrid[rockx][rocky] = cellType.DESTRUCTABLE_STONE;
         }
         
-        for (int i = 1; i <= 6; i++){
-          for (int j = 1; j <= 5; j++){
-            addObstacle(new Obstruction((i*60*2), (j*50*2)));
+        for (int i = 1; i <= 5; i++){
+          for (int j = 1; j <= 6; j++){
+            addObstacle(new Obstruction((j*60*2), (i*50*2)));
+            gameLogic.gameGrid[i*2][j*2] = cellType.STONE;
           }
         }
     }
@@ -108,6 +132,11 @@ public class PaintPane extends JPanel implements ActionListener {
         Obstruction temp = obstacles.get(i);
         temp.draw(g2d);
       }
+      
+      for (int i = 0; i < upgrades.size(); i++){
+        Upgrade temp = upgrades.get(i);
+        temp.draw(g2d);
+      }
     }
 
     @Override
@@ -118,6 +147,20 @@ public class PaintPane extends JPanel implements ActionListener {
 
     public void addRock(Rock r){
       rocks.add(r);
+    }
+    
+    public static void removeRock(int y, int x){
+      ArrayList<Rock> rocks = PaintPane.getRockList();
+      for (int i = 0; i < rocks.size(); i++){
+        Rock temp = rocks.get(i);
+        
+        if ((temp.x == x*60) && (temp.y == y*50)){
+          rocks.remove(temp);
+          Upgrade replace = new Upgrade(x*60, y*50);
+          addUpgrade(replace);
+          break;
+        }
+      }
     }
     
     public static ArrayList<Rock> getRockList(){
@@ -142,5 +185,17 @@ public class PaintPane extends JPanel implements ActionListener {
     
     public static ArrayList<Bomb> getBombList(){
       return bombs;
+    }    
+	
+	  public static void addUpgrade(Upgrade u){
+      upgrades.add(u);
+    }
+    
+    public static void removeUpgrade(Upgrade u){
+      upgrades.remove(u);
+    }
+    
+    public static ArrayList<Upgrade> getUpgradeList(){
+      return upgrades;
     }    
 }

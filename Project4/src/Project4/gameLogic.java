@@ -19,12 +19,9 @@ public class gameLogic
   // array of players playing
   // indexed by player number
   public static player [] players;
-  
-  // number of active/alive players
-  static int numPlayersAlive;
-  
-  private static final int NUM_ROWS = 1000;
-  private static final int NUM_COLS = 1000;
+    
+  static final int NUM_ROWS = 13;
+  static final int NUM_COLS = 15;
   public static cellType [][] gameGrid;
   
   
@@ -37,6 +34,36 @@ public class gameLogic
     return xValid && yValid;
   }
   
+  public void updateLocation(int playerNum){
+	  if (players[playerNum].x/60 == players[playerNum].oldx/60 &&
+			  players[playerNum].y/50 == players[playerNum].oldy/50){
+		  return;
+	  }
+	  else{
+		  if (gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] ==  cellType.PLAYER_AND_BOMB){
+			  gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] = cellType.BOMB;
+		  } else if (gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] ==  cellType.PLAYER){
+			  gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] = cellType.GRASS;
+		  }
+		  
+	      if (gameGrid[players[playerNum].y/50][players[playerNum].x/60] == cellType.FIRE)
+	      {
+	        players[playerNum].alive = false;
+	        gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER_DEAD;
+	      
+	        GUI.numPlayersAlive--;
+	        if (GUI.numPlayersAlive <= 1)
+	        {
+	          roundOver();
+	        }
+	      }
+	    //IF POWERUP (UPDATE)
+		  gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER;
+	  }
+  }
+  
+  
+  /*
   // returns whether given location
   // is "walkable", i.e. within the grid
   // and either a grass or fire tile
@@ -55,7 +82,8 @@ public class gameLogic
     else
       return false;
   }
-  
+  */
+  /*
   // moves player to new location if possible
   // and updates player object and grid appropriately
   public static void movePlayer(int playerNum, direction moveDirection)
@@ -82,7 +110,6 @@ public class gameLogic
       newLoc.y++;
     else
       newLoc.x--;
-    
     // if location is off grid, or not walkable (i.e. not grass or fire)
     // return (and redraw to show new player direction)
     if (walkableLocation(newLoc))
@@ -146,7 +173,8 @@ public class gameLogic
     
     System.out.println("Error: somehow got to end of movePlayer!");
   }
-  
+  */
+	  
   // places bomb in player's current
   // location if the player is able to 
   // drop anymore bombs
@@ -171,9 +199,7 @@ public class gameLogic
     
     // place bomb in current location
     // create timer object for bomb
-    Location curLoc = bombPlayer.loc;
-    gameGrid[curLoc.y][curLoc.x] = cellType.PLAYER_AND_BOMB;
-    //bombTimer(this, curLoc, bombPLayer.bombRadius, playerNum <- (for explodeBomb), 3 seconds);
+    gameGrid[bombPlayer.y/50][bombPlayer.x/60] = cellType.PLAYER_AND_BOMB;
     
     redrawGrid();
     return;
@@ -184,7 +210,7 @@ public class gameLogic
   // exploded and destroyed ( destructable stone, powerup, or another bomb (w/ or w/out player)
   // or stopped (stone or off map)
   public enum explodeType { NOT_EXPLODABLE, EXPLODABLE, DESTROY_AND_STOP };
-  public explodeType explodableLocation(Location loc)
+  public static explodeType explodableLocation(Location loc)
   {
     if (validLocation(loc) == false)
       return explodeType.NOT_EXPLODABLE;
@@ -209,13 +235,14 @@ public class gameLogic
   // creates fire in all directions until fire is of size radius
   // or it has hit a stone, 
   // or a destructable tile / powerup (in which case it destroys object)
-  public void explodeBomb(Location bombLoc, int bombRadius, int playerNum)
+  public static void explodeBomb(Location bombLoc, int bombRadius, int playerNum)
   {
+	System.out.println("Bomb: " + bombLoc.y + " " + bombLoc.x);
     // invalid location, do nada
     if (validLocation(bombLoc) == false)
       return;
     
-    // if bomb does not exist in location anymore, do nada
+    // if bomb does not exist in location anymore, do Ada
     if (gameGrid[bombLoc.y][bombLoc.x] != cellType.BOMB && 
         gameGrid[bombLoc.y][bombLoc.x] != cellType.PLAYER_AND_BOMB)
       return;
@@ -239,7 +266,7 @@ public class gameLogic
       // type of explosion at loc (non, explode, destructable)
       explodeType explodeLocType = explodableLocation(northLoc);
       
-      // not explodable, don't add any more locs
+      // not exploitable, don't add any more locs
       if (explodeLocType == explodeType.NOT_EXPLODABLE)
         break;
       
@@ -250,7 +277,7 @@ public class gameLogic
         break;
       }
       
-      // else, explodable, keep adding
+      // else, exploitable, keep adding
       else
         locStack.add(northLoc);
     }
@@ -278,7 +305,7 @@ public class gameLogic
     // south
     for (int i = 1; i <= bombRadius; i++)
     {
-      Location northLoc = new Location(bombLoc.x + i, bombLoc.y);
+      Location northLoc = new Location(bombLoc.x - i, bombLoc.y);
       
       explodeType explodeLocType = explodableLocation(northLoc);
       
@@ -298,7 +325,7 @@ public class gameLogic
     // west
     for (int i = 1; i <= bombRadius; i++)
     {
-      Location northLoc = new Location(bombLoc.x + i, bombLoc.y);
+      Location northLoc = new Location(bombLoc.x, bombLoc.y + i);
       
       explodeType explodeLocType = explodableLocation(northLoc);
       
@@ -315,10 +342,13 @@ public class gameLogic
         locStack.add(northLoc);
     }
     
+    for (Location loc : locStack){
+    	System.out.println("Check: " + loc.y + " " + loc.x);
+    }
     // check each location on stack
     // and destroy
     // update if player found
-    for (Location loc : locStack)
+    for (final Location loc : locStack)
     {
       cellType locType = gameGrid[loc.y][loc.x];
       
@@ -335,35 +365,47 @@ public class gameLogic
         player deadPlayer = null;
         for (player alivePlayer : players)
         {
+          if (alivePlayer == null){
+        	  break;
+          }
           if (alivePlayer.alive == true &&
               alivePlayer.loc.x == loc.x &&
               alivePlayer.loc.y == loc.y)
             deadPlayer = alivePlayer;
         }
+        if (deadPlayer != null){
+        	deadPlayer.alive = false;
+        }
         
-        deadPlayer.alive = false;
-        
-        numPlayersAlive--;
-        if (numPlayersAlive == 1)
+        GUI.numPlayersAlive--;
+        if (GUI.numPlayersAlive < 2)
         {
           roundOver();
         }
-        
+        /*
         // player is dead so create dead player timer
         // removes dead player from grid after so many seconds
         Timer timer;
         timer = new Timer();
         timer.schedule(new clearDeadTimer(this, loc), 1000);
+        */
       }
       
       // else just set location on fire
       // and create fire timer to clear it
       else
       {
+    	System.out.println(loc.y + " " + loc.x);
+    	PaintPane.removeRock(loc.y, loc.x);
         gameGrid[loc.y][loc.x] = cellType.FIRE;
         Timer timer;
         timer = new Timer();
-        timer.schedule(new fireBallTimer(this, loc), 500);
+        timer.schedule(new TimerTask(){
+        	public void run(){
+        		gameLogic.gameGrid[loc.y][loc.x] = cellType.GRASS;
+        	}
+        }, 2000);
+
       }
     }
     

@@ -34,7 +34,7 @@ public class Rock extends Entity {
   }
     
   public Rectangle getBounds(){
-    return new Rectangle(x, y, getRockImg().getWidth(null), getRockImg().getHeight(null)-10);
+    return new Rectangle(x, y, getRockImg().getWidth(null), getRockImg().getHeight(null));
   
   }
 
