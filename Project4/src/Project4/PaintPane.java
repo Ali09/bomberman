@@ -236,7 +236,7 @@ public class PaintPane extends JPanel implements ActionListener {
         Rock temp = rocks.get(i);
         if ((temp.x == x*60) && (temp.y == y*50)){
           rocks.remove(temp);
-          if (rand.nextInt(2) == 0){
+          if (rand.nextInt(3) < 2){
             Upgrade replace = new Upgrade(x*60, y*50);
             addUpgrade(replace);
             gameLogic.gameGrid[y][x] = cellType.POWERUP;
