@@ -24,6 +24,7 @@ public class PaintPane extends JPanel implements ActionListener {
     static ArrayList<Bomb> bombs = new ArrayList<Bomb>();
     static ArrayList<Obstruction> obstacles = new ArrayList<Obstruction>();
   	static ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
+  	static ArrayList<Fire> fires = new ArrayList<Fire>();
     static ArrayList<Rock> rocks = new ArrayList<Rock>();
     static Rock grid[][] = new Rock[11][13];
     static gameLogic gameLogic;
@@ -39,13 +40,13 @@ public class PaintPane extends JPanel implements ActionListener {
         
         for (int i = 0; i < GUI.numPlayers; i++){
           if (i == 0){
-            player temp = new player(60, 50, i);
+            player temp = new player(60+15, 50+2, i);
             addKeyListener(new KeyAdapt(temp));
             gameLogic.players[i] = temp;
             players.add(temp);
           }
           else if (i == 1){
-            player temp = new player(60, 100, i);
+            player temp = new player(13*60+15, 11*50+2, i);
             addKeyListener(new KeyAdapt(temp));
             players.add(temp);
             gameLogic.players[i] = temp;
@@ -94,10 +95,10 @@ public class PaintPane extends JPanel implements ActionListener {
               rocky = rand.nextInt(13);
             }
             grid[rockx][rocky] = new Rock(rockx, rocky);
-            addRock(new Rock(60+(rocky*60), 50+(rockx*50)));
+            addRock(new Rock(((rocky+1)*60), ((rockx+1)*50)));
+            gameLogic.gameGrid[rockx+1][rocky+1] = cellType.DESTRUCTABLE_STONE;
             rockx = rand.nextInt(11);
             rocky = rand.nextInt(13);
-            gameLogic.gameGrid[rockx][rocky] = cellType.DESTRUCTABLE_STONE;
         }
         
         for (int i = 1; i <= 5; i++){
@@ -106,6 +107,17 @@ public class PaintPane extends JPanel implements ActionListener {
             gameLogic.gameGrid[i*2][j*2] = cellType.STONE;
           }
         }
+                /*
+        for (int i = 0; i < 11; i++){
+          for (int j = 0; j < 13; j++){
+            if (grid[i][j] == null){
+             System.out.print("X");
+            }
+            else System.out.print("R");
+          }
+          System.out.println();
+        }
+        */
     }
 
     @Override
@@ -156,6 +168,11 @@ public class PaintPane extends JPanel implements ActionListener {
         Upgrade temp = upgrades.get(i);
         temp.draw(g2d);
       }
+      
+      for (int i = 0; i < fires.size(); i++){
+        Fire temp = fires.get(i);
+        temp.draw(g2d);
+      }
     }
 
     @Override
@@ -164,6 +181,36 @@ public class PaintPane extends JPanel implements ActionListener {
         player temp = players.get(i);
         temp.update();
       }
+      /*
+      for (int i = 0; i < 13; i++){
+        for (int j = 0; j < 15; j++){
+          switch(gameLogic.gameGrid[i][j]){
+          case GRASS: System.out.print("G");
+            break;
+          case STONE: System.out.print("S");
+            break;
+          case DESTRUCTABLE_STONE: System.out.print("D");
+            break;
+          case FIRE: System.out.print("F");
+            break;
+          case BOMB: System.out.print("B");
+            break;
+          case PLAYER: System.out.print("P");
+            break;
+          case PLAYER_DEAD: System.out.print("X");
+            break;
+          case PLAYER_AND_BOMB: System.out.print("A");
+            break;
+          case POWERUP: System.out.print("U");
+            break;
+          default:
+            break;
+          }
+        }
+        System.out.println();
+      }
+      */
+      
       repaint();
     }
     
@@ -187,12 +234,12 @@ public class PaintPane extends JPanel implements ActionListener {
       ArrayList<Rock> rocks = PaintPane.getRockList();
       for (int i = 0; i < rocks.size(); i++){
         Rock temp = rocks.get(i);
-        
         if ((temp.x == x*60) && (temp.y == y*50)){
           rocks.remove(temp);
           if (rand.nextInt(2) == 0){
             Upgrade replace = new Upgrade(x*60, y*50);
             addUpgrade(replace);
+            gameLogic.gameGrid[y][x] = cellType.POWERUP;
           }
           break;
         }
@@ -233,5 +280,17 @@ public class PaintPane extends JPanel implements ActionListener {
     
     public static ArrayList<Upgrade> getUpgradeList(){
       return upgrades;
+    }    
+    
+    public static void addFire(Fire f){
+      fires.add(f);
+    }
+    
+    public static void removeFire(Fire f){
+      fires.remove(f);
+    }
+    
+    public static ArrayList<Fire> getFireList(){
+      return fires;
     }    
 }

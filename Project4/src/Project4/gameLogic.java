@@ -256,7 +256,7 @@ public class gameLogic
     
     // first add bomb's location to stack
     locStack.add(bombLoc);
-    
+    System.out.println("North");
     // check north locations
     for (int i = 1; i <= bombRadius; i++)
     {
@@ -264,7 +264,7 @@ public class gameLogic
       
       // type of explosion at loc (non, explode, destructable)
       explodeType explodeLocType = explodableLocation(northLoc);
-      
+      System.out.println(explodeLocType);
       // not exploitable, don't add any more locs
       if (explodeLocType == explodeType.NOT_EXPLODABLE)
         break;
@@ -280,14 +280,14 @@ public class gameLogic
       else
         locStack.add(northLoc);
     }
-    
+    System.out.println("East");
     // east
     for (int i = 1; i <= bombRadius; i++)
     {
       Location northLoc = new Location(bombLoc.x + i, bombLoc.y);
       
       explodeType explodeLocType = explodableLocation(northLoc);
-      
+      System.out.println(explodeLocType);
       if (explodeLocType == explodeType.NOT_EXPLODABLE)
         break;
       
@@ -300,14 +300,14 @@ public class gameLogic
       else
         locStack.add(northLoc);
     }
-    
-    // south
+    System.out.println("West");
+    // west
     for (int i = 1; i <= bombRadius; i++)
     {
       Location northLoc = new Location(bombLoc.x - i, bombLoc.y);
       
       explodeType explodeLocType = explodableLocation(northLoc);
-      
+      System.out.println(explodeLocType);
       if (explodeLocType == explodeType.NOT_EXPLODABLE)
         break;
       
@@ -320,14 +320,14 @@ public class gameLogic
       else
         locStack.add(northLoc);
     }
-    
-    // west
+    System.out.println("South");
+    // south
     for (int i = 1; i <= bombRadius; i++)
     {
       Location northLoc = new Location(bombLoc.x, bombLoc.y + i);
       
       explodeType explodeLocType = explodableLocation(northLoc);
-      
+      System.out.println(explodeLocType);
       if (explodeLocType == explodeType.NOT_EXPLODABLE)
         break;
       
@@ -341,9 +341,9 @@ public class gameLogic
         locStack.add(northLoc);
     }
     
-    for (Location loc : locStack){
-    	System.out.println("Check: " + loc.y + " " + loc.x + " = " + gameGrid[loc.y][loc.x]);
-    }
+    //for (Location loc : locStack){
+    //	System.out.println("Check: " + loc.y + " " + loc.x + " = " + gameGrid[loc.y][loc.x]);
+    //}
     // check each location on stack
     // and destroy
     // update if player found
@@ -375,12 +375,11 @@ public class gameLogic
             player deadPlayer = alivePlayer;
             deadPlayer.alive = false;
             PaintPane.removePlayer(deadPlayer);
+            GUI.numPlayersAlive--;
           }
         }
-
         
-        GUI.numPlayersAlive--;
-        if (GUI.numPlayersAlive < 2)
+        if (GUI.numPlayersAlive < 1)
         {
           roundOver();
         }
@@ -397,15 +396,20 @@ public class gameLogic
       // and create fire timer to clear it
       else
       {
-    	PaintPane.removeRock(loc.y, loc.x);
         gameGrid[loc.y][loc.x] = cellType.FIRE;
         Timer timer;
         timer = new Timer();
+        final Fire temp = new Fire(loc.x*60, loc.y*50);
+        PaintPane.addFire(temp);
+        System.out.println("Fire made");
         timer.schedule(new TimerTask(){
         	public void run(){
+        	  System.out.println("Fire gone");
+        	  PaintPane.removeFire(temp);
+        	  PaintPane.removeRock(loc.y, loc.x);
         		gameLogic.gameGrid[loc.y][loc.x] = cellType.GRASS;
         	}
-        }, 2000);
+        }, 1000);
 
       }
     }

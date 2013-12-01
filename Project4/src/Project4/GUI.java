@@ -21,14 +21,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 public class GUI extends JFrame{
   
   static JLabel grid[][];
   public static int numPlayers = 2;
   //Number of players alive
   public static int numPlayersAlive;
-  private static int scores[];
+  public static JLabel scores[];
   
   
   class backImage extends JComponent{
@@ -54,34 +53,15 @@ public class GUI extends JFrame{
 
     add(score, BorderLayout.NORTH);
     
-    scores = new int[numPlayers];
+    scores = new JLabel[numPlayers];
     
     for (int i = 0; i < numPlayers; i++){
-      score.add(new JLabel("Player " + i + ": " + scores[i]));
+      scores[i] = new JLabel("Player " + i + ": 0, Num: 1, Rad: 1, Speed: 1");
+      score.add(scores[i]);
     }
     
     
     
-    /* FIX
-    
-    player[] people = new player[numPlayers];
-    for (int i = 0; i < numPlayers; i++){
-      switch(i){
-      case 1:
-        people[i] = new player(100, 100);
-        break;
-      case 2:
-        people[i] = new player(200, 200);
-        break;
-      case 3:
-        people[i] = new player(300, 300);
-        break;
-      case 4:
-        people[i] = new player(400, 400);
-        break;
-      }
-    }
-    */
     numPlayersAlive = numPlayers;
     
     

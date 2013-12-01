@@ -1,5 +1,6 @@
 package Project4;
 
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -7,9 +8,9 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 
-public class Rock extends Entity {
-  
-  public Rock(int x, int y) {
+public class Fire extends Entity {
+
+  public Fire(int x, int y) {
     super(x, y);
   }
 
@@ -17,11 +18,11 @@ public class Rock extends Entity {
   }
   
   public void draw(Graphics2D g2d){
-    g2d.drawImage(getRockImg(), x, y, null);
+    g2d.drawImage(getFireImg(), x, y, null);
   }
   
-  public Image getRockImg(){
-    ImageIcon ic = new ImageIcon("src/Project4/images/rocks.gif");
+  public Image getFireImg(){
+    ImageIcon ic = new ImageIcon("src/Project4/images/explosion.gif");
     return ic.getImage();
   }
   
@@ -32,8 +33,7 @@ public class Rock extends Entity {
   }
     
   public Rectangle getBounds(){
-    return new Rectangle(x, y, getRockImg().getWidth(null), getRockImg().getHeight(null));
-  
+    return new Rectangle(x, y, getFireImg().getWidth(null), getFireImg().getHeight(null));
   }
 
 }

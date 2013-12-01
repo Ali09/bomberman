@@ -38,7 +38,7 @@ public class player extends Entity
   public int score;
 
   int velX = 0, velY = 0;
-  int speed = 2;
+  int speed = 1;
   
   int oldx, oldy;
   
@@ -49,6 +49,7 @@ public class player extends Entity
   }
 
   public void update(){
+    GUI.scores[playerNum].setText("Player " + playerNum + ": " + score + ", Num: " + numBombs + ", Rad: " + bombRadius + ", Speed: " + speed);
     boolean flagx = true;
     boolean flagy = true;
     int newx = x+velX;
@@ -63,7 +64,7 @@ public class player extends Entity
           }      
       }
     }
-*/    getUpgrade(newx, newy);
+*/  getUpgrade(newx, newy);
     
        
     if (collides(x+velX, y+velY)){
@@ -94,37 +95,35 @@ public class player extends Entity
   }
   
   public Image getPlayerImg(){
-    ImageIcon ic = new ImageIcon("src/Project4/images/sprite2.gif");
+    ImageIcon ic = new ImageIcon("src/Project4/images/player" + playerNum + ".gif");
     return ic.getImage();
   }
   public void keyPressed(KeyEvent e){
     int key = e.getKeyCode();
-    if (key == KeyEvent.VK_UP){
+    if ((key == KeyEvent.VK_UP && playerNum == 0) || (key == KeyEvent.VK_W && playerNum == 1)){
       velY = -speed;
-    } else if (key == KeyEvent.VK_DOWN){
+    } else if ((key == KeyEvent.VK_DOWN && playerNum == 0) || (key == KeyEvent.VK_S && playerNum == 1)){
       velY = speed;
-    } else if (key == KeyEvent.VK_LEFT){
+    } else if ((key == KeyEvent.VK_LEFT && playerNum == 0) || (key == KeyEvent.VK_A && playerNum == 1)){
       velX = -speed;
-    } else if (key == KeyEvent.VK_RIGHT){
+    } else if ((key == KeyEvent.VK_RIGHT && playerNum == 0) || (key == KeyEvent.VK_D && playerNum == 1)){
       velX = speed;
     } 
-    if ((key == KeyEvent.VK_SPACE) && numBombs > 0){
+    if (((key == KeyEvent.VK_SPACE && playerNum == 0) || (key == KeyEvent.VK_SHIFT && playerNum == 1))&& numBombs > 0 && alive){
     	//If bomb in place dont add another
-      //gameLogic.placeBomb(playerNum);
-      numBombs--;
-      System.out.println("a lot");
+      gameLogic.placeBomb(playerNum);
       final int they = y/50;
       final int thex = x/60;
       final Bomb temp = new Bomb((60+((thex-1)*60)), (50+((they-1)*50)));
       gameLogic.gameGrid[they][thex] = cellType.PLAYER_AND_BOMB;
       try {
-        GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_1.gif"))));
+        GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_1.gif"))));
         Timer timer1 = new Timer();
         timer1.schedule(new TimerTask(){
           public void run(){
             PaintPane.addBomb(temp);
             try {
-              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_2.gif"))));
+              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_2.gif"))));
             } catch (IOException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -136,7 +135,7 @@ public class player extends Entity
         timer2.schedule(new TimerTask(){
           public void run(){
             try {
-              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player1_3.gif"))));
+              GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_3.gif"))));
             } catch (IOException e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
@@ -154,7 +153,6 @@ public class player extends Entity
               e.printStackTrace();
             }
             PaintPane.removeBomb(temp);
-            numBombs++;
             gameLogic.explodeBomb(new Location(thex, they), bombRadius, playerNum);
           }
         }, 3000);  
@@ -169,13 +167,13 @@ public class player extends Entity
   
   public void keyReleased(KeyEvent e){
     int key = e.getKeyCode();
-    if (key == KeyEvent.VK_UP){
+    if ((key == KeyEvent.VK_UP && playerNum == 0) || (key == KeyEvent.VK_W && playerNum == 1)){
       velY = 0;
-    } else if (key == KeyEvent.VK_DOWN){
+    } else if ((key == KeyEvent.VK_DOWN && playerNum == 0) || (key == KeyEvent.VK_S && playerNum == 1)){
       velY = 0;
-    } else if (key == KeyEvent.VK_LEFT){
+    } else if ((key == KeyEvent.VK_LEFT && playerNum == 0) || (key == KeyEvent.VK_A && playerNum == 1)){
       velX = 0;
-    } else if (key == KeyEvent.VK_RIGHT){
+    } else if ((key == KeyEvent.VK_RIGHT && playerNum == 0) || (key == KeyEvent.VK_D && playerNum == 1)){
       velX = 0;
     } 
   }
@@ -209,16 +207,26 @@ public class player extends Entity
         return true;
       }
     }   
+    ArrayList<Fire> fires = PaintPane.getFireList();
+
+    for (int i = 0; i < fires.size(); i++){
+      Fire temp = fires.get(i);
+      
+      if (getBounds(newx, newy).intersects(temp.getBounds())){
+        alive = false;
+        PaintPane.removePlayer(this);
+        GUI.numPlayersAlive--;
+        return true;
+      }
+    }   
     return false;
   }
   
   public void getUpgrade(int newx, int newy){
-    ArrayList<Upgrade> upgrades = PaintPane.getUpgradeList();
-    
+    ArrayList<Upgrade> upgrades = PaintPane.getUpgradeList();   
     for (int i = 0; i < upgrades.size(); i++){
       Upgrade temp = upgrades.get(i);
       if (getBounds(newx, newy).intersects(temp.getBounds())){
-        System.out.println("No");
         switch(temp.type){
     		case "RADIUS": bombRadius++;
     		break;
@@ -229,7 +237,6 @@ public class player extends Entity
     		default:
     		break;
         }
-        System.out.println("Yes");
         PaintPane.removeUpgrade(temp);
         System.out.println("Upgrade removed");
       }
