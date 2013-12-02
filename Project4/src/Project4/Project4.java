@@ -1,7 +1,14 @@
 package Project4;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -16,21 +23,22 @@ public class Project4 {
   static GUI thegui = null;
   
   public static void main(String[] args){
-
-    String serverType = new String(" ");
-    Scanner stdin = new Scanner(System.in);
-    while (!(serverType.equals("host") || serverType.equals("client")))
+    
+    networkWindow netWin = new networkWindow();
+    
+    while (netWin.connectionType.equals(" "))
     {
-      System.out.println("Are you a host or client:");
-      serverType = stdin.nextLine();
+      System.out.print("");
     }
 
-    thegui = new GUI();;
+    thegui = new GUI();
     thegui.pack();
     thegui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     thegui.setVisible(true);
+    
+    System.out.println(netWin.connectionType);
     //ClientServerSocket theServer = null;
-    if (serverType.equals("host"))
+    if (netWin.connectionType.equals("HOST"))
     {
       
       // print out current ip address for players
@@ -38,8 +46,17 @@ public class Project4 {
       try 
       {
         ip = InetAddress.getLocalHost();
-        System.out.println("Current IP address : " + ip.getHostAddress());
-      } 
+        
+        JFrame ipWin = new JFrame("IP Address");
+        ipWin.setLayout(new BorderLayout());
+        JLabel ipLabel = new JLabel("Current IP address : " + ip.getHostAddress());
+        ipWin.add(ipLabel, BorderLayout.NORTH);
+        JLabel waitLabel = new JLabel("Waiting for client to connect...");
+        ipWin.add(waitLabel, BorderLayout.SOUTH);
+        ipWin.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        ipWin.pack();
+        ipWin.setVisible(true);
+       } 
       
       catch (UnknownHostException e) 
       {
@@ -50,6 +67,14 @@ public class Project4 {
       
       theServer = new ClientServerSocket(ip.getHostAddress() , 45000);
       theServer.startServer();
+      
+      JFrame connectedWin = new JFrame("Succesfully Connected");
+      connectedWin.setLayout(new FlowLayout());
+      JLabel connectedLabel = new JLabel("Client connection accepted");
+      connectedWin.add(connectedLabel);
+      connectedWin.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+      connectedWin.pack();
+      connectedWin.setVisible(true);
       
       while (true)
       {
@@ -81,21 +106,20 @@ public class Project4 {
         }
       }
     }
-    else if (serverType.equals("client"))
+    else if (netWin.connectionType.equals("CLIENT"))
     {
       String recvdStr;
-
-      String serverIP = new String(" ");
-      Scanner stdin2 = new Scanner(System.in);
-      while (serverIP.equals(" "))
+      
+      ipInputWindow ipInWin = new ipInputWindow();
+      
+      while (ipInWin.ipAddr.equals(" "))
       {
-        System.out.println("IP Address of Host: ");
-        serverIP  = stdin2.nextLine();
+        System.out.print("");
       }
 
-      theClient = new ClientServerSocket(serverIP, 45000);
+      theClient = new ClientServerSocket(ipInWin.ipAddr, 45000);
       theClient.startClient();
-      theClient.sendString("noob from client");
+
       while (true)
       {
         String recvd = theClient.recvString();

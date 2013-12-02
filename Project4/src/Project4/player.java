@@ -150,6 +150,7 @@ public class player extends Entity {
   }
   
   public void doBomb(){
+    GUI.playSound("bomb.wav");
     gameLogic.placeBomb(playerNum);
     final int they = y/50;
     final int thex = x/60;
@@ -191,6 +192,7 @@ public class player extends Entity {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
+          GUI.playSound("explosion.wav");
           PaintPane.removeBomb(temp);
           gameLogic.explodeBomb(new Location(thex, they), bombRadius, playerNum);
         }

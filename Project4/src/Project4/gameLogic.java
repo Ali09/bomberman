@@ -399,8 +399,6 @@ public class gameLogic
         System.out.println("Fire: " + loc.x*60 + " " + loc.y*50);
         timer.schedule(new TimerTask(){
         	public void run(){
-        	  System.out.println("Gone: " + loc.x*60 + " " + loc.y*50);
-        	  System.out.println(PaintPane.fires.size());
         	  PaintPane.removeFire(loc.y, loc.x);
         	  System.out.println(PaintPane.fires.size());
             gameLogic.gameGrid[loc.y][loc.x] = cellType.GRASS;

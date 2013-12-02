@@ -10,6 +10,7 @@ import Project4.gameLogic.cellType;
 public class Reset {
 
   Reset(int playerNum){
+    GUI.playSound("death.wav");
     System.out.println(playerNum);
     System.out.println(GUI.numPlayersAlive);
     if (GUI.numPlayersAlive == 0){

@@ -11,15 +11,24 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import sun.audio.*;
+import java.io.*;
+
 
 public class GUI extends JFrame{
   
@@ -42,8 +51,29 @@ public class GUI extends JFrame{
       }
   }
   
+  public static synchronized void playSound(final String url) {
+    new Thread(new Runnable() {
+    // The wrapper thread is unnecessary, unless it blocks on the
+    // Clip finishing; see comments.
+      public void run() {
+        try {
+          Clip clip = AudioSystem.getClip();
+          AudioInputStream inputStream = AudioSystem.getAudioInputStream(
+            GUI.class.getResourceAsStream("sounds/" + url));
+          clip.open(inputStream);
+          clip.start(); 
+        } catch (Exception e) {
+          System.err.println(e.getMessage());
+        }
+      }
+    }).start();
+  }
+  
+  
   public GUI(){
     GUIcons();
+    playSound("music.wav");
+
   }
   
   public void GUIcons(){
