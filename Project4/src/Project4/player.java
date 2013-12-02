@@ -93,7 +93,6 @@ public class player extends Entity {
   }
 
   public void keyPressed(KeyEvent e){
-    System.out.println(PaintPane.fires.size());
     int key = e.getKeyCode();
     if ((key == KeyEvent.VK_UP && playerNum == 0) || (key == KeyEvent.VK_W && playerNum == 1)){
       velY = -speed;
@@ -319,7 +318,6 @@ public class player extends Entity {
         }
         PaintPane.removeUpgrade(temp);
         PaintPane.gameLogic.gameGrid[newy/50][newx/60] = cellType.PLAYER;
-        System.out.println("Upgrade removed");
       }
     }
   }

@@ -11,54 +11,49 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class ipInputWindow extends JFrame
-{
+public class ipInputWindow extends JFrame {
   String ipAddr = " ";
   JTextField ipField;
-  public ipInputWindow()
-  {
+
+  public ipInputWindow() {
     // window for ip
     setTitle("IP Address Input");
     setLayout(new BorderLayout());
-        
+
     JLabel ipLabel = new JLabel("\t\t\tEnter IP Address of Host:");
-    JButton okButton = new JButton("OK");   
-        
+    JButton okButton = new JButton("OK");
+
     ipField = new JTextField();
-    
+
     JPanel topPanel = new JPanel(new FlowLayout());
     JPanel midPanel = new JPanel(new FlowLayout());
     JPanel botPanel = new JPanel(new FlowLayout());
-    
+
     topPanel.add(ipLabel);
     midPanel.add(ipField);
     botPanel.add(okButton);
-    
+
     // add listeners for ok button
-    okButton.addActionListener(new ActionListener()
-                              {
-                                public void actionPerformed(ActionEvent e)
-                                {
-                                  try
-                                  {
-                                    ipAddr = ipField.getText();
-                                    setVisible(false);
-                                  }
-                                  
-                                  catch(NumberFormatException exception)
-                                  {
-                                    System.out.println("Bad field input");
-                                  }
-                                }
-                              });
-    
+    okButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        try {
+          ipAddr = ipField.getText();
+          setVisible(false);
+        }
+
+        catch (NumberFormatException exception) {
+          System.out.println("Bad field input");
+        }
+      }
+    });
+
     add(ipLabel, BorderLayout.NORTH);
     add(ipField, BorderLayout.CENTER);
     add(botPanel, BorderLayout.SOUTH);
-    
+
     setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    
-    setSize(500,100);
+
+    setSize(500, 100);
     setVisible(true);
   }
 }

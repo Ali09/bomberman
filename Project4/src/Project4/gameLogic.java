@@ -396,11 +396,9 @@ public class gameLogic
         timer = new Timer();
         Fire temp = new Fire(loc.x*60, loc.y*50);
         PaintPane.addFire(temp);
-        System.out.println("Fire: " + loc.x*60 + " " + loc.y*50);
         timer.schedule(new TimerTask(){
         	public void run(){
         	  PaintPane.removeFire(loc.y, loc.x);
-        	  System.out.println(PaintPane.fires.size());
             gameLogic.gameGrid[loc.y][loc.x] = cellType.GRASS;
         	  PaintPane.removeRock(loc.y, loc.x);
         	}
