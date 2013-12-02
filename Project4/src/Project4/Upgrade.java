@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 
 public class Upgrade extends Entity {
   public String type;
-  
+
   public Upgrade(int x, int y) {
     super(x, y);
     int temp = PaintPane.rand.nextInt(3);

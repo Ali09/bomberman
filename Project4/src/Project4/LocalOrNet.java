@@ -12,34 +12,34 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 
-public class networkWindow extends JFrame {
-  public String connectionType = " ";
+public class LocalOrNet extends JFrame {
+  public String gameType = " ";
 
-  public networkWindow() {
-    setTitle("Network Type");
+  public LocalOrNet() {
+    setTitle("Local or Network");
     setLayout(new FlowLayout());
 
-    JLabel networkAsk = new JLabel("Network type:");
+    JLabel ask = new JLabel("Choose:");
 
-    JButton hostButton = new JButton("Host");
-    JButton clientButton = new JButton("Client");
+    JButton localButton = new JButton("Local");
+    JButton networkButton = new JButton("Network");
 
-    add(networkAsk);
-    add(hostButton);
-    add(clientButton);
+    add(ask);
+    add(localButton);
+    add(networkButton);
     pack();
     setVisible(true);
 
-    hostButton.addActionListener(new ActionListener() {
+    localButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        connectionType = "HOST";
+        gameType = "LOCAL";
         setVisible(false);
       }
     });
 
-    clientButton.addActionListener(new ActionListener() {
+    networkButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        connectionType = "CLIENT";
+        gameType = "NETWORK";
         setVisible(false);
       }
     });

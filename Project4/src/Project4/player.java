@@ -1,5 +1,6 @@
 package Project4;
 
+import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -13,6 +14,8 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import Project4.gameLogic.cellType;
 import Project4.gameLogic.explodeType;
@@ -25,7 +28,7 @@ public class player extends Entity {
   public int playerNum;
   public Location loc;
   public gameLogic.direction playerDirection;
-  
+
   // number of bombs player is able
   // to drop at a given instant, initially 1
   public int numBombs = 1;
@@ -42,13 +45,14 @@ public class player extends Entity {
 
   public player(int x, int y, int playerNum) {
     super(x, y);
+    oldx = x;
+    oldy = y;
     this.playerNum = playerNum;
     update();
   }
 
   public void update() {
-    GUI.scores[playerNum].setText("Player " + playerNum + ": " + scores[playerNum]
-        + ", Num: " + numBombs + ", Rad: " + bombRadius + ", Speed: " + speed);
+    updateLabel();
     boolean flagx = true;
     boolean flagy = true;
     int newx = x + velX;
@@ -92,112 +96,127 @@ public class player extends Entity {
     return ic.getImage();
   }
 
-  public void keyPressed(KeyEvent e){
+  public void keyPressed(KeyEvent e) {
     int key = e.getKeyCode();
-    if ((key == KeyEvent.VK_UP && playerNum == 0) || (key == KeyEvent.VK_W && playerNum == 1)){
+    if ((key == KeyEvent.VK_UP && playerNum == 0)
+        || (key == KeyEvent.VK_W && playerNum == 1)) {
       velY = -speed;
       String stuff = Integer.toString(playerNum);
       String sendThis = "UP_PRESSED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
-      else {
-        Project4.theClient.sendString(sendThis);
-      }
-    } else if ((key == KeyEvent.VK_DOWN && playerNum == 0) || (key == KeyEvent.VK_S && playerNum == 1)){
+    } else if ((key == KeyEvent.VK_DOWN && playerNum == 0)
+        || (key == KeyEvent.VK_S && playerNum == 1)) {
       velY = speed;
       String stuff = Integer.toString(playerNum);
       String sendThis = "DOWN_PRESSED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
-      else {
-        Project4.theClient.sendString(sendThis);
-      }
-    } else if ((key == KeyEvent.VK_LEFT && playerNum == 0) || (key == KeyEvent.VK_A && playerNum == 1)){
+    } else if ((key == KeyEvent.VK_LEFT && playerNum == 0)
+        || (key == KeyEvent.VK_A && playerNum == 1)) {
       velX = -speed;
       String stuff = Integer.toString(playerNum);
       String sendThis = "LEFT_PRESSED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
-      else {
-        Project4.theClient.sendString(sendThis);
-      }
-    } else if ((key == KeyEvent.VK_RIGHT && playerNum == 0) || (key == KeyEvent.VK_D && playerNum == 1)){
+    } else if ((key == KeyEvent.VK_RIGHT && playerNum == 0)
+        || (key == KeyEvent.VK_D && playerNum == 1)) {
       velX = speed;
       String stuff = Integer.toString(playerNum);
       String sendThis = "RIGHT_PRESSED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
-      else {
-        Project4.theClient.sendString(sendThis);
-      }
-    } 
-    if (((key == KeyEvent.VK_SPACE && playerNum == 0) || (key == KeyEvent.VK_SHIFT && playerNum == 1))&& numBombs > 0){
+    }
+    if (((key == KeyEvent.VK_SPACE && playerNum == 0) || (key == KeyEvent.VK_SHIFT && playerNum == 1))
+        && numBombs > 0) {
       String stuff = Integer.toString(playerNum);
       String sendThis = "SPACE_PRESSED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
-      }
-      else {
-        Project4.theClient.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
       doBomb();
     }
   }
-  
-  public void doBomb(){
+
+  public void doBomb() {
     GUI.playSound("bomb.wav");
     gameLogic.placeBomb(playerNum);
-    final int they = y/50;
-    final int thex = x/60;
-    final Bomb temp = new Bomb((60+((thex-1)*60)), (50+((they-1)*50)));
+    final int they = y / 50;
+    final int thex = x / 60;
+    final Bomb temp = new Bomb((60 + ((thex - 1) * 60)),
+        (50 + ((they - 1) * 50)));
     gameLogic.gameGrid[they][thex] = cellType.PLAYER_AND_BOMB;
     try {
-      GUI.grid[y/50][x/60].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_1.gif"))));
+      GUI.grid[y / 50][x / 60].setIcon(new ImageIcon(ImageIO.read(new File(
+          "src/Project4/images/bomb_player" + playerNum + "_1.gif"))));
       Timer timer1 = new Timer();
-      timer1.schedule(new TimerTask(){
-        public void run(){
+      timer1.schedule(new TimerTask() {
+        public void run() {
           PaintPane.addBomb(temp);
           try {
-            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_2.gif"))));
+            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File(
+                "src/Project4/images/bomb_player" + playerNum + "_2.gif"))));
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }
       }, 1000);
-      
+
       Timer timer2 = new Timer();
-      timer2.schedule(new TimerTask(){
-        public void run(){
+      timer2.schedule(new TimerTask() {
+        public void run() {
           try {
-            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/bomb_player" + playerNum + "_3.gif"))));
+            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File(
+                "src/Project4/images/bomb_player" + playerNum + "_3.gif"))));
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }
-      }, 2000);    
-      
+      }, 2000);
+
       Timer timer3 = new Timer();
-      timer3.schedule(new TimerTask(){
-        public void run(){
+      timer3.schedule(new TimerTask() {
+        public void run() {
           try {
-            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File("src/Project4/images/empty.gif"))));
+            GUI.grid[they][thex].setIcon(new ImageIcon(ImageIO.read(new File(
+                "src/Project4/images/empty.gif"))));
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
           }
           GUI.playSound("explosion.wav");
           PaintPane.removeBomb(temp);
-          gameLogic.explodeBomb(new Location(thex, they), bombRadius, playerNum);
+          gameLogic
+              .explodeBomb(new Location(thex, they), bombRadius, playerNum);
         }
-      }, 3000);  
-      
-      
+      }, 3000);
+
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -211,44 +230,48 @@ public class player extends Entity {
       velY = 0;
       String stuff = Integer.toString(playerNum);
       String sendThis = "UP_RELEASED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
-      }
-      else {
-        Project4.theClient.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
     } else if ((key == KeyEvent.VK_DOWN && playerNum == 0)
         || (key == KeyEvent.VK_S && playerNum == 1)) {
       velY = 0;
       String stuff = Integer.toString(playerNum);
       String sendThis = "DOWN_RELEASED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
-      }
-      else {
-        Project4.theClient.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
     } else if ((key == KeyEvent.VK_LEFT && playerNum == 0)
         || (key == KeyEvent.VK_A && playerNum == 1)) {
       velX = 0;
       String stuff = Integer.toString(playerNum);
       String sendThis = "LEFT_RELEASED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
-      }
-      else {
-        Project4.theClient.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
     } else if ((key == KeyEvent.VK_RIGHT && playerNum == 0)
         || (key == KeyEvent.VK_D && playerNum == 1)) {
       velX = 0;
       String stuff = Integer.toString(playerNum);
       String sendThis = "RIGHT_RELEASED_" + stuff;
-      if (playerNum == 0){
-        Project4.theServer.sendString(sendThis);
-      }
-      else {
-        Project4.theClient.sendString(sendThis);
+      if (!Project4.local) {
+        if (playerNum == 0) {
+          Project4.theServer.sendString(sendThis);
+        } else {
+          Project4.theClient.sendString(sendThis);
+        }
       }
     }
   }
@@ -282,19 +305,14 @@ public class player extends Entity {
       }
     }
     /*
-    ArrayList<Fire> fires = PaintPane.getFireList();
-
-    for (int i = 0; i < fires.size(); i++) {
-      Fire temp = fires.get(i);
-
-      if (getBounds(newx, newy).intersects(temp.getBounds())) {
-        //PaintPane.removePlayer(this);
-        GUI.numPlayersAlive--;
-        //gameLogic.roundOver(playerNum, false);
-        return true;
-      }
-    }
-    */
+     * ArrayList<Fire> fires = PaintPane.getFireList();
+     * 
+     * for (int i = 0; i < fires.size(); i++) { Fire temp = fires.get(i);
+     * 
+     * if (getBounds(newx, newy).intersects(temp.getBounds())) {
+     * //PaintPane.removePlayer(this); GUI.numPlayersAlive--;
+     * //gameLogic.roundOver(playerNum, false); return true; } }
+     */
     return false;
   }
 
@@ -308,7 +326,11 @@ public class player extends Entity {
           bombRadius++;
           break;
         case "SPEED":
-          speed++;
+          if (speed >= 5) { // Max Speed (then it becomes uncontrollable)
+            speed = 5;
+          } else {
+            speed++;
+          }
           break;
         case "AMOUNT":
           numBombs++;
@@ -317,7 +339,7 @@ public class player extends Entity {
           break;
         }
         PaintPane.removeUpgrade(temp);
-        PaintPane.gameLogic.gameGrid[newy/50][newx/60] = cellType.PLAYER;
+        PaintPane.gameLogic.gameGrid[newy / 50][newx / 60] = cellType.PLAYER;
       }
     }
   }
@@ -327,4 +349,24 @@ public class player extends Entity {
         getPlayerImg().getHeight(null) - 5);
   }
 
+  public void updateLabel() {
+    /*
+     * GUI.scores[playerNum].setText("Player " + playerNum + ": " +
+     * scores[playerNum] + ", Num: " + numBombs + ", Rad: " + bombRadius +
+     * ", Speed: " + speed);
+     */
+
+    if (playerNum == 0) {
+      GUI.score0.setText(Integer.toString(scores[playerNum]));
+      GUI.speed0.setText(Integer.toString(speed));
+      GUI.bombs0.setText(Integer.toString(numBombs));
+      GUI.radius0.setText(Integer.toString(bombRadius));
+    } else {
+      GUI.score1.setText(Integer.toString(scores[playerNum]));
+      GUI.speed1.setText(Integer.toString(speed));
+      GUI.bombs1.setText(Integer.toString(numBombs));
+      GUI.radius1.setText(Integer.toString(bombRadius));
+    }
+
+  }
 }
