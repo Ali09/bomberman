@@ -45,20 +45,32 @@ public class gameLogic
 		  } else if (gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] ==  cellType.PLAYER){
 			  gameGrid[players[playerNum].oldy/50][players[playerNum].oldx/60] = cellType.GRASS;
 		  }
-		  
-	      if (gameGrid[players[playerNum].y/50][players[playerNum].x/60] == cellType.FIRE)
-	      {
-	        players[playerNum].alive = false;
-	        gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER_DEAD;
-	      
-	        GUI.numPlayersAlive--;
-	        if (GUI.numPlayersAlive <= 1)
-	        {
-	          roundOver();
-	        }
-	      }
-	    //IF POWERUP (UPDATE)
-		  gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER;
+
+
+      if (gameGrid[players[playerNum].y/50][players[playerNum].x/60] == cellType.FIRE)
+      {
+        players[playerNum].alive = false;
+        gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER_DEAD;
+      
+        GUI.numPlayersAlive--;
+        if (GUI.numPlayersAlive <= 1)
+        {
+          roundOver();
+        }
+      }
+      
+      else if (gameGrid[players[playerNum].y/50][players[playerNum].x/60] == cellType.BOMB)
+      {
+        gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER_AND_BOMB;
+      }
+      
+      //IF POWERUP (UPDATE)
+      else
+      {
+        gameGrid[players[playerNum].y/50][players[playerNum].x/60] = cellType.PLAYER;
+      }
+
+
 	  }
   }
   
