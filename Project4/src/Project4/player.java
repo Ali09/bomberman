@@ -25,8 +25,7 @@ public class player extends Entity {
   public int playerNum;
   public Location loc;
   public gameLogic.direction playerDirection;
-  public boolean alive = true;
-
+  
   // number of bombs player is able
   // to drop at a given instant, initially 1
   public int numBombs = 1;
@@ -34,7 +33,7 @@ public class player extends Entity {
   // radius of bomb explosion for player, initially 1
   public int bombRadius = 1;
 
-  public int score;
+  public int scores[] = Project4.scores;
 
   int velX = 0, velY = 0;
   int speed = 1;
@@ -48,7 +47,7 @@ public class player extends Entity {
   }
 
   public void update() {
-    GUI.scores[playerNum].setText("Player " + playerNum + ": " + score
+    GUI.scores[playerNum].setText("Player " + playerNum + ": " + scores[playerNum]
         + ", Num: " + numBombs + ", Rad: " + bombRadius + ", Speed: " + speed);
     boolean flagx = true;
     boolean flagy = true;
@@ -94,6 +93,7 @@ public class player extends Entity {
   }
 
   public void keyPressed(KeyEvent e){
+    System.out.println(PaintPane.fires.size());
     int key = e.getKeyCode();
     if ((key == KeyEvent.VK_UP && playerNum == 0) || (key == KeyEvent.VK_W && playerNum == 1)){
       velY = -speed;
@@ -136,7 +136,7 @@ public class player extends Entity {
         Project4.theClient.sendString(sendThis);
       }
     } 
-    if (((key == KeyEvent.VK_SPACE && playerNum == 0) || (key == KeyEvent.VK_SHIFT && playerNum == 1))&& numBombs > 0 && alive){
+    if (((key == KeyEvent.VK_SPACE && playerNum == 0) || (key == KeyEvent.VK_SHIFT && playerNum == 1))&& numBombs > 0){
       String stuff = Integer.toString(playerNum);
       String sendThis = "SPACE_PRESSED_" + stuff;
       if (playerNum == 0){
@@ -280,18 +280,20 @@ public class player extends Entity {
         return true;
       }
     }
+    /*
     ArrayList<Fire> fires = PaintPane.getFireList();
 
     for (int i = 0; i < fires.size(); i++) {
       Fire temp = fires.get(i);
 
       if (getBounds(newx, newy).intersects(temp.getBounds())) {
-        alive = false;
-        PaintPane.removePlayer(this);
+        //PaintPane.removePlayer(this);
         GUI.numPlayersAlive--;
+        //gameLogic.roundOver(playerNum, false);
         return true;
       }
     }
+    */
     return false;
   }
 
@@ -314,6 +316,7 @@ public class player extends Entity {
           break;
         }
         PaintPane.removeUpgrade(temp);
+        PaintPane.gameLogic.gameGrid[newy/50][newx/60] = cellType.PLAYER;
         System.out.println("Upgrade removed");
       }
     }

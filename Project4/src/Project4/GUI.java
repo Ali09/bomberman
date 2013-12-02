@@ -43,6 +43,10 @@ public class GUI extends JFrame{
   }
   
   public GUI(){
+    GUIcons();
+  }
+  
+  public void GUIcons(){
     setTitle("Bomberman");
     //setLayout(new BorderLayout());
         

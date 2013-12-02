@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -168,7 +169,6 @@ public class PaintPane extends JPanel implements ActionListener {
         Upgrade temp = upgrades.get(i);
         temp.draw(g2d);
       }
-      
       for (int i = 0; i < fires.size(); i++){
         Fire temp = fires.get(i);
         temp.draw(g2d);
@@ -182,34 +182,40 @@ public class PaintPane extends JPanel implements ActionListener {
         temp.update();
       }
       /*
-      for (int i = 0; i < 13; i++){
-        for (int j = 0; j < 15; j++){
-          switch(gameLogic.gameGrid[i][j]){
-          case GRASS: System.out.print("G");
-            break;
-          case STONE: System.out.print("S");
-            break;
-          case DESTRUCTABLE_STONE: System.out.print("D");
-            break;
-          case FIRE: System.out.print("F");
-            break;
-          case BOMB: System.out.print("B");
-            break;
-          case PLAYER: System.out.print("P");
-            break;
-          case PLAYER_DEAD: System.out.print("X");
-            break;
-          case PLAYER_AND_BOMB: System.out.print("A");
-            break;
-          case POWERUP: System.out.print("U");
-            break;
-          default:
-            break;
+      Timer t = new Timer();
+      t.schedule(new TimerTask(){
+        public void run(){
+          for (int i = 0; i < 13; i++){
+            for (int j = 0; j < 15; j++){
+              switch(gameLogic.gameGrid[i][j]){
+              case GRASS: System.out.print("G");
+                break;
+              case STONE: System.out.print("S");
+                break;
+              case DESTRUCTABLE_STONE: System.out.print("D");
+                break;
+              case FIRE: System.out.print("F");
+                break;
+              case BOMB: System.out.print("B");
+                break;
+              case PLAYER: System.out.print("P");
+                break;
+              case PLAYER_DEAD: System.out.print("X");
+                break;
+              case PLAYER_AND_BOMB: System.out.print("A");
+                break;
+              case POWERUP: System.out.print("U");
+                break;
+              default:
+                break;
+              }
+            }
+            System.out.println();
           }
+          System.out.println();  
         }
-        System.out.println();
-      }
-      */
+      })
+*/
       
       repaint();
     }
@@ -286,8 +292,15 @@ public class PaintPane extends JPanel implements ActionListener {
       fires.add(f);
     }
     
-    public static void removeFire(Fire f){
-      fires.remove(f);
+    public static void removeFire(int y, int x){
+      ArrayList<Fire> fires = PaintPane.getFireList();
+      for (int i = 0; i < fires.size(); i++){
+        Fire temp = fires.get(i);
+        if ((temp.x == x*60) && (temp.y == y*50)){
+          fires.remove(temp);
+          break;
+        }
+      }
     }
     
     public static ArrayList<Fire> getFireList(){

@@ -11,6 +11,10 @@ public class Project4 {
   static ClientServerSocket theServer = null;
   static ClientServerSocket theClient = null;
   
+  static int scores[] = new int[2];
+  
+  static GUI thegui = null;
+  
   public static void main(String[] args){
 
     String serverType = new String(" ");
@@ -21,7 +25,7 @@ public class Project4 {
       serverType = stdin.nextLine();
     }
 
-    GUI thegui = new GUI();;
+    thegui = new GUI();;
     thegui.pack();
     thegui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     thegui.setVisible(true);
@@ -70,6 +74,8 @@ public class Project4 {
           break;
         case "RIGHT_RELEASED_1": temp.velX = 0;
           break;
+        case "RESET": Reset starOver = new Reset(1);
+          break;
         default:
           break;
         }
@@ -112,6 +118,8 @@ public class Project4 {
         case "LEFT_RELEASED_0": temp.velX = 0;
           break;
         case "RIGHT_RELEASED_0": temp.velX = 0;
+          break;
+        case "RESET": Reset startOver = new Reset(0);
           break;
         default:
           break;
