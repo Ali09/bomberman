@@ -16,7 +16,7 @@ import Project4.gameLogic.cellType;
 
 public class PaintPane extends JPanel implements ActionListener {
   
-    static Random rand = new Random();
+    static Random rand = new Random(123);
   
     private Image background;
     Timer mainTimer;
